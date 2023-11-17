@@ -47,8 +47,8 @@ public final class Constants {
     //   * So Number of Rotations of this CANCOder sensor measured means this amount of rotations in actual SPEED wheel
     //   */
     // public static double gearRatioCANCoder = (double) 24.0/22.0 * 15.0/45.0;
-    public static final double wheelDiameter = Units.inchesToMeters(4.0);
-    public static final double wheelCircumfrence = wheelDiameter * 2 * Math.PI;
+    public static final double kWheelDiameter = Units.inchesToMeters(3.5);
+    public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
     public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
     public static final double anglekP = 0.002;
     public static final double anglekI = 0;

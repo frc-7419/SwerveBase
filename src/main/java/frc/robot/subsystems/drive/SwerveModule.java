@@ -43,7 +43,7 @@ public class SwerveModule {
         // PID init
         angleController = new PIDController(Constants.SwerveConstants.anglekP, Constants.SwerveConstants.anglekI, Constants.SwerveConstants.anglekD);
         angleController.enableContinuousInput(0, 360);
-        angleController.setTolerance(1);
+        angleController.setTolerance(0.5);
         // Turn motor init
         turnMotor = new CANSparkMax(turnMotorID, MotorType.kBrushless);
         turnMotor.setIdleMode(IdleMode.kCoast);
@@ -59,7 +59,7 @@ public class SwerveModule {
         turnEncoder.configSensorDirection(false);
         // Drive encoder init
         driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setPositionConversionFactor(1/22); // TODO: fix this
+        driveEncoder.setPositionConversionFactor((1/Constants.SwerveConstants.kWheelCircumfrence)/(Constants.SwerveConstants.gearRatioSpeedMotor));
         driveEncoder.setVelocityConversionFactor(1); //TODO: fix this
     }
 

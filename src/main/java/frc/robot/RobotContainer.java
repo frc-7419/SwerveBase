@@ -2,10 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SwerveDriveFieldCentric;
+import frc.robot.commands.TranslateDistance;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
 public class RobotContainer {
@@ -45,7 +45,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-    return new WaitCommand(5);
+    return new TranslateDistance(driveBase, 90, 0);
   }
   /**
    * Sets default commands to be used for teleop
