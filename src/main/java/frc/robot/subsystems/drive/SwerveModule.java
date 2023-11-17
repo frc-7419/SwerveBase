@@ -59,8 +59,8 @@ public class SwerveModule {
         turnEncoder.configSensorDirection(false);
         // Drive encoder init
         driveEncoder = driveMotor.getEncoder();
-        driveEncoder.setPositionConversionFactor((1/Constants.SwerveConstants.kWheelCircumfrence)/(Constants.SwerveConstants.gearRatioSpeedMotor));
-        driveEncoder.setVelocityConversionFactor(1); //TODO: fix this
+        driveEncoder.setPositionConversionFactor(1/((1/Constants.SwerveConstants.kWheelCircumfrence)*5.5));
+        //driveEncoder.setVelocityConversionFactor(1); //TODO: fix this
     }
 
     public void coast() {
@@ -82,7 +82,7 @@ public class SwerveModule {
     }
 
     public boolean reachedDist(double meters) {
-        return Math.abs(driveEncoder.getPosition()) > meters;
+        return Math.abs(getDrivePosition()) > meters;
     }
 
     public double getDriveVelocity() {

@@ -45,7 +45,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-    return new TranslateDistance(driveBase, 90, 0);
+    return new TranslateDistance(driveBase, 1, 0);
   }
   /**
    * Sets default commands to be used for teleop

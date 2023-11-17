@@ -17,8 +17,8 @@ public class TranslateDistance extends CommandBase {
 
   public TranslateDistance(DriveBaseSubsystem driveBaseSubsystem, double xDistance, double yDistance) {
     this.driveBaseSubsystem = driveBaseSubsystem;
-    this.xVelocity = xDistance==0?0:0.5*(xDistance/Math.abs(xDistance));
-    this.yVelocity = yDistance==0?0:0.5*(yDistance/Math.abs(yDistance));
+    this.xVelocity = xDistance==0?0:0.2*(xDistance/Math.abs(xDistance));
+    this.yVelocity = yDistance==0?0:0.2*(yDistance/Math.abs(yDistance));
     this.totalDistance = Math.sqrt((xDistance*xDistance)+(yDistance*yDistance));
     this.chassisSpeeds = new ChassisSpeeds(xVelocity, yVelocity,0);
     addRequirements(driveBaseSubsystem);
@@ -34,7 +34,6 @@ public class TranslateDistance extends CommandBase {
   @Override
   public void execute() {
     driveBaseSubsystem.setModuleStates(chassisSpeeds);
-    System.out.println("running");
   }
 
   // Called once the command ends or is interrupted.
