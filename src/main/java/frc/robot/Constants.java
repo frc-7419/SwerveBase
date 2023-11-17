@@ -71,6 +71,7 @@ public final class Constants {
     public final int turnEncoderID;
     public final double absolutePositionAtRobotZero;
     public final Translation2d location;
+    public static final double kMaxTurningSpeed = 0.3;
     
     public SwerveModuleConstants(int driveMotorID, int turnMotorID, int turnEncoderID, double absolutePositionAtRobotZero, Translation2d location) {
       this.driveMotorID = driveMotorID;

@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
@@ -19,34 +17,6 @@ public class SwerveDriveFieldCentric extends CommandBase {
     this.driveBaseSubsystem = driveBaseSubsystem;
     addRequirements(driveBaseSubsystem);
   }
-  /**
-   * Sets the individual swerve module states
-   * @param moduleStates
-   */
-  public void setModuleStates(SwerveModuleState[] moduleStates) {
-    for (int i=0; i<4; ++i) {
-      driveBaseSubsystem.getSwerveModule(i).setSwerveModuleState(moduleStates[i]);
-    }
-  }
-  public void setModuleStatesTeleop(SwerveModuleState[] moduleStates, XboxController joystick) {
-    for (int i=0; i<4; ++i) {
-      driveBaseSubsystem.getSwerveModule(i).setSwerveModuleState(moduleStates[i]);
-    }
-  }
-  /**
-   * Sets the module states directly from the chassis speed
-   * @param chassisSpeeds
-   */
-  public void setModuleStatesFromChassisSpeed(ChassisSpeeds chassisSpeeds) {
-    setModuleStates(driveBaseSubsystem.ChassisSpeedstoModuleSpeeds(chassisSpeeds));
-  }
-  /**
-   * this is what makes the robot begin moving, the entry point for swerve centric drive!
-   * @param joystick
-   */
-  public void setModuleStatesFromJoystick(XboxController joystick) {
-    setModuleStatesFromChassisSpeed(driveBaseSubsystem.getChassisSpeedsFromJoystick(joystick));
-  }
 
   @Override
   public void initialize() {
@@ -56,7 +26,7 @@ public class SwerveDriveFieldCentric extends CommandBase {
 
   @Override
   public void execute() {
-    setModuleStatesFromJoystick(joystick);
+    driveBaseSubsystem.setModuleStatesFromJoystick(joystick);
   }
 
   @Override

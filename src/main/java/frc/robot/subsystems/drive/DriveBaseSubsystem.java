@@ -48,10 +48,6 @@ public class DriveBaseSubsystem extends SubsystemBase {
     return swerveModules[index];
   }
 
-  public SwerveModule[] getSwerveModules() {
-    return swerveModules;
-  }
-
   public double getYaw() { // CW IS POSITIVE BY DEFAULT
     return -ahrs.getYaw();
   }
@@ -129,5 +125,28 @@ public class DriveBaseSubsystem extends SubsystemBase {
    */
   public SwerveModuleState[] ChassisSpeedstoModuleSpeeds(ChassisSpeeds chassisSpeeds) {
     return Constants.SwerveConstants.m_kinematics.toSwerveModuleStates(chassisSpeeds);
+  }
+  /**
+   * Sets the individual swerve module states
+   * @param moduleStates
+   */
+  public void setModuleStates(SwerveModuleState[] moduleStates) {
+    for (int i=0; i<4; ++i) {
+      swerveModules[i].setSwerveModuleState(moduleStates[i]);
+    }
+  }
+    /**
+   * Sets the module states directly from the chassis speed
+   * @param chassisSpeeds
+   */
+  public void setModuleStatesFromChassisSpeed(ChassisSpeeds chassisSpeeds) {
+    setModuleStates(ChassisSpeedstoModuleSpeeds(chassisSpeeds));
+  }
+  /**
+   * this is what makes the robot begin moving, the entry point for swerve centric drive!
+   * @param joystick
+   */
+  public void setModuleStatesFromJoystick(XboxController joystick) {
+    setModuleStatesFromChassisSpeed(getChassisSpeedsFromJoystick(joystick));
   }
 }

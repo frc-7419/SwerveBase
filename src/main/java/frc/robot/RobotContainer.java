@@ -10,6 +10,9 @@ import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
 public class RobotContainer {
   
+  // Joysticks, subsystems, and commands must all be private and final
+
+  // Joysticks
   private final XboxController driver = new XboxController(0); //driver
 
   //Subsystems
@@ -17,23 +20,36 @@ public class RobotContainer {
 
   //Commands
   private final SwerveDriveFieldCentric swerveDriveFieldCentric = new SwerveDriveFieldCentric(driver, driveBase);
-  private SendableChooser<Command> autonomousChooser = new SendableChooser<>();
-
+  private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+  /**
+   * Creates new RobotContainer and configures auton and buttons
+   */
   public RobotContainer() {
     configureButtonBindings();
     configureAutoSelector();
   }
-
+  /**
+   * This method is for configuring the button bindings on the joysticks
+   */
   private void configureButtonBindings() {
 
   }
+  /**
+   * This method is for configuring the auton chooser
+   */
   private void configureAutoSelector() {
     SmartDashboard.putData("Auton", autonomousChooser);
   }
+  /**
+   * This will be the method which gets called to 
+   * @return Auton command
+   */
   public Command getAutonomousCommand() {
     return new WaitCommand(5);
   }
-
+  /**
+   * Sets default commands to be used for teleop
+   */
   public void setDefaultCommands() {
     driveBase.setDefaultCommand(swerveDriveFieldCentric);
   }

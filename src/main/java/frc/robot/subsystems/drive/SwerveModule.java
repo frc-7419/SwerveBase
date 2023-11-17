@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 
-// The SwerveModule file contains the the logic of the entire Swerve Drive functionality of EveryBot
-// Inputs: Motor IDs(CanSparks for now, but change when new motors arrive)
-// Outputs: The Swerve Drive functionality for EveryBot
+/**
+ * This is where the low-level logic for swerve is handled
+ */
 public class SwerveModule {
     private final CANSparkMax turnMotor;
     private final CANSparkMax driveMotor;
@@ -32,12 +32,12 @@ public class SwerveModule {
     private final String module;
 
     /**
-     * Contains the main SwerveModule logic of the bot
-     * @param turnMotorID is a CAN ID parameter(int)
-     * @param driveMotorID is a CAN ID parameter(int)
-     * @param turnEncoderID is a CAN ID parameter(int)
+     * Makes a new swerve module, this handles one turn motor and one drive motor
+     * @param turnMotorID is a CAN ID parameter (int)
+     * @param driveMotorID is a CAN ID parameter (int)
+     * @param turnEncoderID is a CAN ID parameter (int)
      * @param turnEncoderOffset is absolute pos at zero in deg (double)
-     * @param module for naming modules during comprehensive shuffleboard outputs
+     * @param module for naming modules during comprehensive shuffleboard outputs (String)
      */
     public SwerveModule(int turnMotorID, int driveMotorID, int turnEncoderID, double turnEncoderOffset, String module) {
         this.module = module;
@@ -94,7 +94,7 @@ public class SwerveModule {
     public void setSwerveModuleState(SwerveModuleState state) {
         state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition()));
         driveMotor.set(state.speedMetersPerSecond);
-        turnMotor.set(-MathUtil.clamp(angleController.calculate(turnEncoder.getAbsolutePosition(), state.angle.getDegrees()) , -0.3 , 0.3));
+        turnMotor.set(-MathUtil.clamp(angleController.calculate(turnEncoder.getAbsolutePosition(), state.angle.getDegrees()) , -Constants.SwerveModuleConstants.kMaxTurningSpeed, Constants.SwerveModuleConstants.kMaxTurningSpeed));
     }   
     /**
      * This function sets the speed of the motors
@@ -107,7 +107,9 @@ public class SwerveModule {
         driveMotor.set(0);
         turnMotor.set(0);
     }
-    
+    /**
+     * Outputs values to dashboard
+     */
     public void outputDashboard() {
         SmartDashboard.putNumber(module+" angle", turnEncoder.getAbsolutePosition());
         SmartDashboard.putNumber(module+" driveEncoder", getDrivePosition());
