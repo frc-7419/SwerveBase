@@ -26,7 +26,7 @@ public class SwerveDriveFieldCentric extends CommandBase {
 
   @Override
   public void execute() {
-    driveBaseSubsystem.setModuleStatesFromJoystick(joystick);
+    driveBaseSubsystem.setModuleStates(driveBaseSubsystem.getChassisSpeedsFromJoystick(joystick.getLeftX(), joystick.getLeftY(), joystick.getRightX(), joystick.getLeftBumper()));
   }
 
   @Override

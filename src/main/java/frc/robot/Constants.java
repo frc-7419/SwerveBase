@@ -24,7 +24,6 @@ public final class Constants {
     public static final double HALF_LENGTH = LENGTH/2.0;
     //Not sure how to calculate this theoretically but this needs to be determined experimentally first
     //Neo Free-Speed 13.16 ft/s 15.68 ft/s 18.66 ft/s
-
     public static final double maxTranslationalSpeed = Units.feetToMeters(3);
     //arbitrary value in radians, let's say one pi/second
     public static final double maxRotationalSpeed = Math.PI/4;
@@ -58,11 +57,15 @@ public final class Constants {
     
     //INFO: according to WPILib docs "The locations for the modules must be relative to the center of the robot. Positive x
     //values represent moving toward the front of the robot whereas positive y values represent moving toward the left of the robot." 
-    public static final SwerveModuleConstants frontLeft = new SwerveModuleConstants(2, 1, 9, 102.39, new Translation2d(SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH) );
-    public static final SwerveModuleConstants frontRight = new SwerveModuleConstants(4, 3, 10, 189.94,  new Translation2d(SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
-    public static final SwerveModuleConstants backRight = new SwerveModuleConstants(6, 5,11, 246.09,  new Translation2d(-SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
-    public static final SwerveModuleConstants backLeft = new SwerveModuleConstants(8, 7, 12, 161.63, new Translation2d(-SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH));
-    public static final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(SwerveConstants.frontLeft.location, SwerveConstants.frontRight.location, SwerveConstants.backRight.location, SwerveConstants.backLeft.location);
+    public static final SwerveModuleConstants frontLeft = new SwerveModuleConstants(2, 1, 9, 102.39,
+     new Translation2d(SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH) );
+    public static final SwerveModuleConstants frontRight = new SwerveModuleConstants(4, 3, 10, 189.94,
+     new Translation2d(SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
+    public static final SwerveModuleConstants backRight = new SwerveModuleConstants(6, 5,11, 246.09,
+     new Translation2d(-SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
+    public static final SwerveModuleConstants backLeft = new SwerveModuleConstants(8, 7, 12, 161.63,
+     new Translation2d(-SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH));
+    public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(SwerveConstants.frontLeft.location, SwerveConstants.frontRight.location, SwerveConstants.backRight.location, SwerveConstants.backLeft.location);
   }
 
   public static class SwerveModuleConstants {

@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
@@ -20,8 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveBaseSubsystem extends SubsystemBase {
   private final SwerveModule[] swerveModules;
-  private SwerveDriveOdometry m_odometry;
-  private SwerveModulePosition[] positions;
+  private SwerveDriveOdometry m_odometry; // TODO: add this
+  private SwerveModulePosition[] positions; // TODO: whatever ur suposed to do with this
   private final AHRS ahrs;
 
   public DriveBaseSubsystem() {
@@ -68,8 +67,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
   }
 
   public void resetDriveEnc() {
-    for (SwerveModule s : swerveModules)
-      s.resetDriveEnc();
+    for (SwerveModule s : swerveModules) s.resetDriveEnc();
   }
 
   public Rotation2d getRotation2d() {
@@ -80,73 +78,55 @@ public class DriveBaseSubsystem extends SubsystemBase {
      */
   }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber( "Yaw", getYaw());
-    for(SwerveModule s : swerveModules) {
-      s.outputDashboard();
-    }
-  }
   public void brake() {
-    for (SwerveModule s : swerveModules) {
-      s.brake();
-    }
+    for (SwerveModule s : swerveModules) s.brake();
   }
+
   public void coast() {
-    for (SwerveModule s : swerveModules) {
-      s.coast();
-    }
+    for (SwerveModule s : swerveModules) s.coast();
   }
+
   public void stop() {
-    for (SwerveModule s : swerveModules) {
-      s.setSpeed(0.0);
-    }
+    for (SwerveModule s : swerveModules) s.stop();
   }
+
   /**
    * Returns chassis speeds from field-centric joystick controls. This is what determines the translational speed of the robot in proportion to joystick values.
    * @param joystick
    * @return
    */
-  public ChassisSpeeds getChassisSpeedsFromJoystick(XboxController joystick) {
-    double vx = Math.abs(joystick.getLeftY())>0.05?joystick.getLeftY() *SwerveConstants.maxTranslationalSpeed:0;
-    double vy = Math.abs(joystick.getLeftX())>0.05?joystick.getLeftX()*SwerveConstants.maxTranslationalSpeed:0;
-    double rx = Math.abs(joystick.getRightX())>0.05?-0.7*joystick.getRightX()*SwerveConstants.maxRotationalSpeed:0;
-    if(joystick.getLeftBumper()) {
+  public ChassisSpeeds getChassisSpeedsFromJoystick(double vx, double vy, double rx, boolean slowMode) {
+    vx = Math.abs(vx)>0.05?vx*SwerveConstants.maxTranslationalSpeed:0;
+    vy = Math.abs(vy)>0.05?vy*SwerveConstants.maxTranslationalSpeed:0;
+    rx = Math.abs(rx)>0.05?-0.7*rx*SwerveConstants.maxRotationalSpeed:0;
+    if(slowMode) {
       vx *= 0.2;
       vy *= 0.2;
       rx *= 0.2;
     }
     return ChassisSpeeds.fromFieldRelativeSpeeds(vx, vy, rx, getRotation2d());
   }
-    /**
-   * Converts chassis speeds to individual module speeds
-   * @param chassisSpeeds
-   * @return 
-   */
-  public SwerveModuleState[] ChassisSpeedstoModuleSpeeds(ChassisSpeeds chassisSpeeds) {
-    return Constants.SwerveConstants.m_kinematics.toSwerveModuleStates(chassisSpeeds);
-  }
+
   /**
    * Sets the individual swerve module states
    * @param moduleStates
    */
   public void setModuleStates(SwerveModuleState[] moduleStates) {
-    for (int i=0; i<4; ++i) {
-      swerveModules[i].setSwerveModuleState(moduleStates[i]);
-    }
+    for (int i=0; i<4; ++i) swerveModules[i].setSwerveModuleState(moduleStates[i]);
   }
-    /**
-   * Sets the module states directly from the chassis speed
-   * @param chassisSpeeds
-   */
-  public void setModuleStatesFromChassisSpeed(ChassisSpeeds chassisSpeeds) {
-    setModuleStates(ChassisSpeedstoModuleSpeeds(chassisSpeeds));
-  }
+
   /**
-   * this is what makes the robot begin moving, the entry point for swerve centric drive!
-   * @param joystick
+   * Sets the individual swerve module states
+   * @param moduleStates
    */
-  public void setModuleStatesFromJoystick(XboxController joystick) {
-    setModuleStatesFromChassisSpeed(getChassisSpeedsFromJoystick(joystick));
+  public void setModuleStates(ChassisSpeeds chassisSpeeds) {
+    SwerveModuleState[] moduleStates = Constants.SwerveConstants.kSwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+    for (int i=0; i<4; ++i) swerveModules[i].setSwerveModuleState(moduleStates[i]);
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber( "Yaw", getYaw());
+    for(SwerveModule s : swerveModules) s.outputDashboard();
   }
 }

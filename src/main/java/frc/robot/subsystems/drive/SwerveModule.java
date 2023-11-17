@@ -19,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
-
 /**
  * This is where the low-level logic for swerve is handled
  */
@@ -41,22 +40,27 @@ public class SwerveModule {
      */
     public SwerveModule(int turnMotorID, int driveMotorID, int turnEncoderID, double turnEncoderOffset, String module) {
         this.module = module;
-        turnMotor = new CANSparkMax(turnMotorID, MotorType.kBrushless);
-        driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
-        turnEncoder = new CANCoder(turnEncoderID);
-        driveEncoder = driveMotor.getEncoder();
+        // PID init
         angleController = new PIDController(Constants.SwerveConstants.anglekP, Constants.SwerveConstants.anglekI, Constants.SwerveConstants.anglekD);
-        turnMotor.setIdleMode(IdleMode.kCoast);
-        driveMotor.setIdleMode(IdleMode.kCoast);
-        angleController.setTolerance(1);
         angleController.enableContinuousInput(0, 360);
+        angleController.setTolerance(1);
+        // Turn motor init
+        turnMotor = new CANSparkMax(turnMotorID, MotorType.kBrushless);
+        turnMotor.setIdleMode(IdleMode.kCoast);
+        // Drive motor init
+        driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
+        driveMotor.setIdleMode(IdleMode.kCoast);
+        // Turn encoder init
+        turnEncoder = new CANCoder(turnEncoderID);
         turnEncoder.configFactoryDefault();
         turnEncoder.configSensorInitializationStrategy(SensorInitializationStrategy.BootToAbsolutePosition);
         turnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         turnEncoder.configMagnetOffset(turnEncoderOffset);
         turnEncoder.configSensorDirection(false);
+        // Drive encoder init
+        driveEncoder = driveMotor.getEncoder();
         driveEncoder.setPositionConversionFactor(1/22); // TODO: fix this
-        resetDriveEnc();
+        driveEncoder.setVelocityConversionFactor(1); //TODO: fix this
     }
 
     public void coast() {
@@ -68,45 +72,41 @@ public class SwerveModule {
         turnMotor.setIdleMode(IdleMode.kBrake);
         driveMotor.setIdleMode(IdleMode.kBrake);
     }
-    // TODO: meter is not a meter
+
     public double getDrivePosition() {
         return driveEncoder.getPosition();
     }
+
     public void resetDriveEnc() {
         driveEncoder.setPosition(0);
     }
-    // TODO: meter is not a meter
+
     public boolean reachedDist(double meters) {
         return Math.abs(driveEncoder.getPosition()) > meters;
     }
-    // TODO: broken set factor
+
     public double getDriveVelocity() {
         return driveEncoder.getVelocity();
     }
-    // TODO: broken set factor
-    public double getTurningVelocity() {
-        return turnEncoder.getVelocity();
-    }
-    // TODO: fix getDriveVelocity()
-    public SwerveModuleState getState() {
+
+    public SwerveModuleState getSwerveModuleState() {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(turnEncoder.getPosition()));
     }
+
     public void setSwerveModuleState(SwerveModuleState state) {
         state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition()));
         driveMotor.set(state.speedMetersPerSecond);
         turnMotor.set(-MathUtil.clamp(angleController.calculate(turnEncoder.getAbsolutePosition(), state.angle.getDegrees()) , -Constants.SwerveModuleConstants.kMaxTurningSpeed, Constants.SwerveModuleConstants.kMaxTurningSpeed));
-    }   
-    /**
-     * This function sets the speed of the motors
-     * @param speed is in the format meters per second(m/s) type: double
-     */
-    public void setSpeed(double speed) {
-        driveMotor.set(speed/Constants.SwerveConstants.maxTranslationalSpeed);
     }
+
+    /**
+     * Stops all motors in the module
+     */
     public void stop() {
         driveMotor.set(0);
         turnMotor.set(0);
     }
+    
     /**
      * Outputs values to dashboard
      */
