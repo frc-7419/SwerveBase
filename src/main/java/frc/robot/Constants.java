@@ -20,14 +20,6 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
   public static class SwerveConstants {
-    public static final double LENGTH = Units.inchesToMeters(26.5);
-    public static final double HALF_LENGTH = LENGTH/2.0;
-    //Not sure how to calculate this theoretically but this needs to be determined experimentally first
-    //Neo Free-Speed 13.16 ft/s 15.68 ft/s 18.66 ft/s
-    public static final double maxTranslationalSpeed = Units.feetToMeters(3);
-    //arbitrary value in radians, let's say one pi/second
-    public static final double maxRotationalSpeed = Math.PI/4;
-
     /*
     * IMPORTANT: THIS WAS FOUND THROUGH CAD FILES BUT THERE ARE MANY SWERVE X CONFIGURATIONS
     * SO YOU NEED TO DOUBLE CHECK THIS IS CORRECT IN PRACTICE
@@ -35,21 +27,23 @@ public final class Constants {
     /* ANGLE MOTOR
     * NEO Shaft to 12T Pulley to 24T Pulley to 14T Gear to 72T Main Rotation Gear
     */
-    public static final double gearRatioAngleMotor = (double) 12.0/24.0*14.0/72.0;
+    public static final double kGearRatioAngleMotor = 12.0/24.0*14.0/72.0;
     /* DRIVE MOTOR
-      * NEO shaft to 12T Pulley to 24T Pulley to 24T Gear to 22T Gear to 15T bevel to 45T Bevel
-      *
-      * The CANCODER measures rotations of a the driven 1:1 PULLEY in which the driver pulley is on the same
-      * shaft as the 24T Pulley
-      */
-    public static final double gearRatioSpeedMotor = (double) 12.0/24.0* 24.0/22.0 * 15.0/45.0;
-    // /* THIS IS WRONG
-    //   * So Number of Rotations of this CANCOder sensor measured means this amount of rotations in actual SPEED wheel
-    //   */
-    // public static double gearRatioCANCoder = (double) 24.0/22.0 * 15.0/45.0;
+    * NEO shaft to 12T Pulley to 24T Pulley to 24T Gear to 22T Gear to 15T bevel to 45T Bevel
+    *
+    * The CANCODER measures rotations of a the driven 1:1 PULLEY in which the driver pulley is on the same
+    * shaft as the 24T Pulley
+    */
+    public static final double kSpeedMotorGearRatio = 12.0/24.0* 24.0/22.0 * 15.0/45.0;
+    public static final double LENGTH = Units.inchesToMeters(26.5);
+    public static final double HALF_LENGTH = LENGTH/2.0;
+    //Not sure how to calculate this theoretically but this needs to be determined experimentally first
+    //Neo Free-Speed 13.16 ft/s 15.68 ft/s 18.66 ft/s
+    public static final double kMaxTranslationalSpeed = Units.feetToMeters(3);
+    //arbitrary value in radians, let's say one pi/second
+    public static final double kMaxRotationalSpeed = Math.PI/4;
     public static final double kWheelDiameter = Units.inchesToMeters(3.5);
     public static final double kWheelCircumfrence = kWheelDiameter * Math.PI;
-    public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
     public static final double anglekP = 0.002;
     public static final double anglekI = 0;
     public static final double anglekD = 0;
@@ -61,26 +55,26 @@ public final class Constants {
      new Translation2d(SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH) );
     public static final SwerveModuleConstants frontRight = new SwerveModuleConstants(4, 3, 10, 189.94,
      new Translation2d(SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
-    public static final SwerveModuleConstants backRight = new SwerveModuleConstants(6, 5,11, 246.09,
-     new Translation2d(-SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
-    public static final SwerveModuleConstants backLeft = new SwerveModuleConstants(8, 7, 12, 161.63,
+     public static final SwerveModuleConstants backLeft = new SwerveModuleConstants(8, 7, 12, 161.63,
      new Translation2d(-SwerveConstants.HALF_LENGTH, SwerveConstants.HALF_LENGTH));
-    public static final SwerveDriveKinematics kSwerveDriveKinematics = new SwerveDriveKinematics(SwerveConstants.frontLeft.location, SwerveConstants.frontRight.location, SwerveConstants.backRight.location, SwerveConstants.backLeft.location);
+     public static final SwerveModuleConstants backRight = new SwerveModuleConstants(6, 5,11, 246.09,
+      new Translation2d(-SwerveConstants.HALF_LENGTH, -SwerveConstants.HALF_LENGTH));
+     public static final SwerveDriveKinematics m_SwerveDriveKinematics = new SwerveDriveKinematics(SwerveConstants.frontLeft.location, SwerveConstants.frontRight.location, SwerveConstants.backLeft.location, SwerveConstants.backRight.location);
   }
 
   public static class SwerveModuleConstants {
     public final int driveMotorID;
     public final int turnMotorID;
     public final int turnEncoderID;
-    public final double absolutePositionAtRobotZero;
+    public final double offset;
     public final Translation2d location;
     public static final double kMaxTurningSpeed = 0.3;
     
-    public SwerveModuleConstants(int driveMotorID, int turnMotorID, int turnEncoderID, double absolutePositionAtRobotZero, Translation2d location) {
+    public SwerveModuleConstants(int driveMotorID, int turnMotorID, int turnEncoderID, double offset, Translation2d location) {
       this.driveMotorID = driveMotorID;
       this.turnMotorID = turnMotorID;
       this.turnEncoderID = turnEncoderID;
-      this.absolutePositionAtRobotZero = absolutePositionAtRobotZero;
+      this.offset = offset;
       this.location = location;
     } 
   }

@@ -6,6 +6,7 @@ package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -18,33 +19,28 @@ import frc.robot.Constants.SwerveConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveBaseSubsystem extends SubsystemBase {
-  private final SwerveModule[] swerveModules;
-  private SwerveDriveOdometry m_odometry; // TODO: add this
-  private SwerveModulePosition[] positions; // TODO: whatever ur suposed to do with this
+  private final SwerveDriveOdometry m_odometry;
+  private final SwerveModule frontLeftModule;
+  private final SwerveModule frontRightModule;
+  private final SwerveModule backLeftModule;
+  private final SwerveModule backRightModule;
   private final AHRS ahrs;
 
   public DriveBaseSubsystem() {
-    swerveModules = new SwerveModule[] {
-        new SwerveModule(SwerveConstants.frontLeft.turnMotorID, SwerveConstants.frontLeft.driveMotorID,
-         SwerveConstants.frontLeft.turnEncoderID, SwerveConstants.frontLeft.absolutePositionAtRobotZero, "FrontLeftModule"),
-        new SwerveModule(SwerveConstants.frontRight.turnMotorID, SwerveConstants.frontRight.driveMotorID,
-         SwerveConstants.frontRight.turnEncoderID, SwerveConstants.frontRight.absolutePositionAtRobotZero, "FrontRightModule"),
-        new SwerveModule(SwerveConstants.backRight.turnMotorID, SwerveConstants.backRight.driveMotorID,
-         SwerveConstants.backRight.turnEncoderID, SwerveConstants.backRight.absolutePositionAtRobotZero, "BackRightModule"),
-        new SwerveModule(SwerveConstants.backLeft.turnMotorID, SwerveConstants.backLeft.driveMotorID,
-         SwerveConstants.backLeft.turnEncoderID, SwerveConstants.backLeft.absolutePositionAtRobotZero, "BackLeftModule"),
-    };
+    frontLeftModule = new SwerveModule(SwerveConstants.frontLeft.turnMotorID, SwerveConstants.frontLeft.driveMotorID, SwerveConstants.frontLeft.turnEncoderID, SwerveConstants.frontLeft.offset, "FrontLeftModule");
+    frontRightModule = new SwerveModule(SwerveConstants.frontRight.turnMotorID, SwerveConstants.frontRight.driveMotorID, SwerveConstants.frontRight.turnEncoderID, SwerveConstants.frontRight.offset, "FrontRightModule");
+    backLeftModule = new SwerveModule(SwerveConstants.backLeft.turnMotorID, SwerveConstants.backLeft.driveMotorID, SwerveConstants.backLeft.turnEncoderID, SwerveConstants.backLeft.offset, "BackLeftModule");
+    backRightModule = new SwerveModule(SwerveConstants.backRight.turnMotorID, SwerveConstants.backRight.driveMotorID, SwerveConstants.backRight.turnEncoderID, SwerveConstants.backRight.offset, "BackRightModule");
     ahrs = new AHRS(SerialPort.Port.kMXP);
     ahrs.zeroYaw(); // field centric, we need yaw to be zero
+    m_odometry = new SwerveDriveOdometry(Constants.SwerveConstants.m_SwerveDriveKinematics, ahrs.getRotation2d(), getPositions());
     coast();
   }
 
+
+
   public void zeroYaw() {
     ahrs.zeroYaw();
-  }
-
-  public SwerveModule getSwerveModule(int index) {
-    return swerveModules[index];
   }
 
   public double getYaw() { // CW IS POSITIVE BY DEFAULT
@@ -60,14 +56,18 @@ public class DriveBaseSubsystem extends SubsystemBase {
   }
 
   public boolean reachedDist(double meters) {
-    return (swerveModules[0].reachedDist(meters)) &&
-           (swerveModules[1].reachedDist(meters)) &&
-           (swerveModules[2].reachedDist(meters)) &&
-           (swerveModules[3].reachedDist(meters));
+    return 
+    (frontLeftModule.reachedDist(meters))&&
+    (frontRightModule.reachedDist(meters))&&
+    (backLeftModule.reachedDist(meters))&&
+    (backRightModule.reachedDist(meters));
   }
 
   public void resetDriveEnc() {
-    for (SwerveModule s : swerveModules) s.resetDriveEnc();
+    frontLeftModule.resetDriveEncoder();
+    frontRightModule.resetDriveEncoder();
+    backLeftModule.resetDriveEncoder();
+    backRightModule.resetDriveEncoder();
   }
 
   public Rotation2d getRotation2d() {
@@ -79,15 +79,46 @@ public class DriveBaseSubsystem extends SubsystemBase {
   }
 
   public void brake() {
-    for (SwerveModule s : swerveModules) s.brake();
+    frontLeftModule.brake();
+    frontRightModule.brake();
+    backLeftModule.brake();
+    backRightModule.brake();
   }
 
   public void coast() {
-    for (SwerveModule s : swerveModules) s.coast();
+    frontLeftModule.coast();
+    frontRightModule.coast();
+    backLeftModule.coast();
+    backRightModule.coast();
+  }
+
+  public SwerveModulePosition[] getPositions() {
+    return new SwerveModulePosition[]{frontLeftModule.getPose(), frontRightModule.getPose(), backLeftModule.getPose(), backRightModule.getPose()};
   }
 
   public void stop() {
-    for (SwerveModule s : swerveModules) s.stop();
+    frontLeftModule.stop();
+    frontRightModule.stop();
+    backLeftModule.stop();
+    backRightModule.stop();
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(ahrs.getRotation2d(), getPositions(), pose);
   }
 
   /**
@@ -96,9 +127,9 @@ public class DriveBaseSubsystem extends SubsystemBase {
    * @return
    */
   public ChassisSpeeds getChassisSpeedsFromJoystick(double vx, double vy, double rx, boolean slowMode) {
-    vx = Math.abs(vx)>0.05?vx*SwerveConstants.maxTranslationalSpeed:0;
-    vy = Math.abs(vy)>0.05?vy*SwerveConstants.maxTranslationalSpeed:0;
-    rx = Math.abs(rx)>0.05?-0.7*rx*SwerveConstants.maxRotationalSpeed:0;
+    vx = Math.abs(vx)>0.05?vx*SwerveConstants.kMaxTranslationalSpeed:0;
+    vy = Math.abs(vy)>0.05?vy*SwerveConstants.kMaxTranslationalSpeed:0;
+    rx = Math.abs(rx)>0.05?-0.7*rx*SwerveConstants.kMaxRotationalSpeed:0;
     if(slowMode) {
       vx *= 0.2;
       vy *= 0.2;
@@ -112,21 +143,27 @@ public class DriveBaseSubsystem extends SubsystemBase {
    * @param moduleStates
    */
   public void setModuleStates(SwerveModuleState[] moduleStates) {
-    for (int i=0; i<4; ++i) swerveModules[i].setSwerveModuleState(moduleStates[i]);
+    frontLeftModule.setSwerveModuleState(moduleStates[0]);
+    frontRightModule.setSwerveModuleState(moduleStates[1]);
+    backLeftModule.setSwerveModuleState(moduleStates[2]);
+    backRightModule.setSwerveModuleState(moduleStates[3]);
   }
 
   /**
-   * Sets the individual swerve module states
+   * Sets the individual swerve module states from chassis speed
    * @param moduleStates
    */
   public void setModuleStates(ChassisSpeeds chassisSpeeds) {
-    SwerveModuleState[] moduleStates = Constants.SwerveConstants.kSwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-    for (int i=0; i<4; ++i) swerveModules[i].setSwerveModuleState(moduleStates[i]);
+    setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber( "Yaw", getYaw());
-    for(SwerveModule s : swerveModules) s.outputDashboard();
+    frontLeftModule.outputDashboard();
+    frontRightModule.outputDashboard();
+    backLeftModule.outputDashboard();
+    backRightModule.outputDashboard();
+    m_odometry.update(getRotation2d(), getPositions());
   }
 }
