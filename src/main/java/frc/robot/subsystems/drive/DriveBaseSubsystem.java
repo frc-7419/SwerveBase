@@ -127,7 +127,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
    * @return
    */
   public ChassisSpeeds getChassisSpeedsFromJoystick(double vx, double vy, double rx, boolean slowMode) {
-    vx = Math.abs(vx)>0.05?vx*SwerveConstants.kMaxTranslationalSpeed:0;
+    vx = Math.abs(vx)>0.05?-vx*SwerveConstants.kMaxTranslationalSpeed:0;
     vy = Math.abs(vy)>0.05?vy*SwerveConstants.kMaxTranslationalSpeed:0;
     rx = Math.abs(rx)>0.05?-0.7*rx*SwerveConstants.kMaxRotationalSpeed:0;
     if(slowMode) {

@@ -96,7 +96,7 @@ public class SwerveModule {
 
     public void setSwerveModuleState(SwerveModuleState state) {
         state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition()));
-        //state.speedMetersPerSecond *= state.angle.minus(Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition())).getCos();
+        state.speedMetersPerSecond *= state.angle.minus(Rotation2d.fromDegrees(turnEncoder.getAbsolutePosition())).getCos();
         driveMotor.set(state.speedMetersPerSecond);
         turnMotor.set(-MathUtil.clamp(angleController.calculate(turnEncoder.getAbsolutePosition(), state.angle.getDegrees()) , -Constants.SwerveModuleConstants.kMaxTurningSpeed, Constants.SwerveModuleConstants.kMaxTurningSpeed));
     }
