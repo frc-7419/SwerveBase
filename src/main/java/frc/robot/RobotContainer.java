@@ -44,7 +44,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-    return driveBase.followPathCommand("SwerveBase/src/main/deploy/pathplanner/paths/testPath.path");
+    return driveBase.followPathCommand("testPath");
     // return new TranslateDistance(driveBase, 1, 0);
   }
   /**
