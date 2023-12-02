@@ -157,6 +157,11 @@ public class DriveBaseSubsystem extends SubsystemBase {
     setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
+  //TODO: make it return actual stuff
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return new ChassisSpeeds();
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber( "Yaw", getYaw());
