@@ -5,10 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
-public class TranslateDistance extends Command {
+public class TranslateDistance extends CommandBase {
   private final DriveBaseSubsystem driveBaseSubsystem;
   private final double xVelocity;
   private final double yVelocity;
