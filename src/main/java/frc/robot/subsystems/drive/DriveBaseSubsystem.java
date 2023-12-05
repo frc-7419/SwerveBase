@@ -191,31 +191,6 @@ public class DriveBaseSubsystem extends SubsystemBase {
     return new ChassisSpeeds();
   }
 
-  // Assuming this is a method in your drive subsystem
-public Command followPathCommand(String pathName){
-  PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-  // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
-  return new FollowPathWithEvents(
-      new FollowPathHolonomic(
-          path,
-          this::getPose, // Robot pose supplier
-          this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-          this::setModuleStates, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-          new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(2.0, 0.0, 0.0), // Rotation PID constants
-              4.5, // Max module speed, in m/s
-              SwerveConstants.RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-              new ReplanningConfig() // Default path replanning config. See the API for the options here
-          ),
-          this // Reference to this subsystem to set requirements
-      ),
-      path, // FollowPathWithEvents also requires the path
-      this::getPose // FollowPathWithEvents also requires the robot pose supplier
-  );
-}
-
-
   @Override
   public void periodic() {
     SmartDashboard.putNumber( "Yaw", getYaw());
