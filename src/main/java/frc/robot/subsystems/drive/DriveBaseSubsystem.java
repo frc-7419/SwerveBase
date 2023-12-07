@@ -5,17 +5,10 @@
 package frc.robot.subsystems.drive;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.FollowPathHolonomic;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -25,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+import com.choreo.lib.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveBaseSubsystem extends SubsystemBase {
@@ -44,18 +38,6 @@ public class DriveBaseSubsystem extends SubsystemBase {
     ahrs.zeroYaw(); // field centric, we need yaw to be zero
     m_odometry = new SwerveDriveOdometry(Constants.SwerveConstants.m_SwerveDriveKinematics, ahrs.getRotation2d(), getPositions());
     coast();
-
-    AutoBuilder.configureHolonomic(
-      this::getPose, 
-      this::resetOdometry, 
-      this::getRobotRelativeSpeeds, 
-      this::setModuleStates,
-      new HolonomicPathFollowerConfig(
-        new PIDConstants(5, 0, 0), 
-        new PIDConstants(5, 0, 0), 
-        5, 
-        0.33655, 
-        new ReplanningConfig()), this);
   }
 
 
@@ -134,14 +116,6 @@ public class DriveBaseSubsystem extends SubsystemBase {
   }
 
   /**
-   * Reset current pose
-   *
-   */
-  public void resetPose() {
-    m_odometry.resetPosition(new Rotation2d(0), getPositions(), new Pose2d(new Translation2d(), new Rotation2d(0)));
-  }
-
-  /**
    * Resets the odometry to the specified pose.
    *
    * @param pose The pose to which to set the odometry.
@@ -186,39 +160,30 @@ public class DriveBaseSubsystem extends SubsystemBase {
     setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
-  //TODO: make it return actual stuff
-  public ChassisSpeeds getRobotRelativeSpeeds() {
-    return new ChassisSpeeds();
+  /**
+   * @param path
+   * @return
+   */
+  public Command followTrajectory(String path){
+    //kmoney says to remember to exclude the .traj file extension in the path
+    ChoreoTrajectory traj = Choreo.getTrajectory(path);
+    Command choreoSwerveCommand = Choreo.choreoSwerveCommand(
+      traj, 
+      this::getPose, 
+      new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
+      new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
+      new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
+      (ChassisSpeeds speeds) -> 
+          this.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation2d())),
+      true,
+      this 
+    );
+    return choreoSwerveCommand;
   }
-
-  // Assuming this is a method in your drive subsystem
-public Command followPathCommand(String pathName){
-  PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-  // You must wrap the path following command in a FollowPathWithEvents command in order for event markers to work
-  return new FollowPathWithEvents(
-      new FollowPathHolonomic(
-          path,
-          this::getPose, // Robot pose supplier
-          this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-          this::setModuleStates, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-          new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
-              new PIDConstants(2.0, 0.0, 0.0), // Rotation PID constants
-              4.5, // Max module speed, in m/s
-              SwerveConstants.RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-              new ReplanningConfig() // Default path replanning config. See the API for the options here
-          ),
-          this // Reference to this subsystem to set requirements
-      ),
-      path, // FollowPathWithEvents also requires the path
-      this::getPose // FollowPathWithEvents also requires the robot pose supplier
-  );
-}
-
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber( "Yaw", getYaw());
+    SmartDashboard.putNumber("Yaw", getYaw());
     frontLeftModule.outputDashboard();
     frontRightModule.outputDashboard();
     backLeftModule.outputDashboard();

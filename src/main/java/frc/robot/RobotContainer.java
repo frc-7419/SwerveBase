@@ -1,11 +1,10 @@
 package frc.robot;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.BasicCurveAuton;
 import frc.robot.commands.SwerveDriveFieldCentric;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
@@ -17,10 +16,10 @@ public class RobotContainer {
   private final XboxController driver = new XboxController(0); //driver
 
   //Subsystems
-  private final DriveBaseSubsystem driveBase = new DriveBaseSubsystem();
+  private final DriveBaseSubsystem driveBaseSubsystem = new DriveBaseSubsystem();
 
   //Commands
-  private final SwerveDriveFieldCentric swerveDriveFieldCentric = new SwerveDriveFieldCentric(driver, driveBase);
+  private final SwerveDriveFieldCentric swerveDriveFieldCentric = new SwerveDriveFieldCentric(driver, driveBaseSubsystem);
   private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
   /**
    * Creates new RobotContainer and configures auton and buttons
@@ -46,15 +45,12 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-
-    return new PathPlannerAuto("JahaanAuto");
-    // return driveBase.followPathCommand("testPath");
-    // return new TranslateDistance(driveBase, 1, 0);
+    return new BasicCurveAuton(driveBaseSubsystem);
   }
   /**
    * Sets default commands to be used for teleop
    */
   public void setDefaultCommands() {
-    driveBase.setDefaultCommand(swerveDriveFieldCentric);
+    driveBaseSubsystem.setDefaultCommand(swerveDriveFieldCentric);
   }
 }

@@ -37,7 +37,6 @@ public final class Constants {
     public static final double kSpeedMotorGearRatio = 12.0/24.0* 24.0/22.0 * 15.0/45.0;
     public static final double LENGTH = Units.inchesToMeters(26.5);
     public static final double HALF_LENGTH = LENGTH/2.0;
-    public static final double RADIUS = Math.sqrt(2*LENGTH*LENGTH)/2;
     //Not sure how to calculate this theoretically but this needs to be determined experimentally first
     //Neo Free-Speed 13.16 ft/s 15.68 ft/s 18.66 ft/s
     public static final double kMaxTranslationalSpeed = Units.feetToMeters(3);
@@ -78,5 +77,13 @@ public final class Constants {
       this.offset = offset;
       this.location = location;
     } 
+  }
+
+  public static class PathPlannerConstants{
+
+    public static final double kPYController = 1.0;
+    public static final double kPThetaController = 1.0;
+    public static final double kPXController = 1.0;
+
   }
 }
