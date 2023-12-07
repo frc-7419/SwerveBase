@@ -165,34 +165,24 @@ public class DriveBaseSubsystem extends SubsystemBase {
   public void setModuleStates(ChassisSpeeds chassisSpeeds) {
     setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
-  //TODO: Get Rid of This
-  // public void followTrajectory(String path){
-  //   HolonomicDriveController holonomicDriveController = new HolonomicDriveController(
-  //   new PIDController(1.0, 0, 0), 
-  //   new PIDController(1.0, 0, 0), 
-  //   new ProfiledPIDController(1, 0, 0, 
-  //   new TrapezoidProfile.Constraints(6.28, 3.14)));
 
-  //   // Trajectory.class.
-
-  //   // Trajectory.State goal = trajectory.sample();
-
-
-
-  // }
+  /**
+   * @param path
+   * @return
+   */
   public Command followTrajectory(String path){
-    //remember to exclude the .traj file extension in the path
+    //kmoney says to remember to exclude the .traj file extension in the path
     ChoreoTrajectory traj = Choreo.getTrajectory(path);
     Command choreoSwerveCommand = Choreo.choreoSwerveCommand(
-      traj, // Choreo trajectory from above
-      this::getPose, // A function that returns the current field-relative pose of the robot: your wheel or vision odometry
+      traj, 
+      this::getPose, 
       new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
       new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
       new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
-      (ChassisSpeeds speeds) -> // A function that consumes the target robot-relative chassis speeds and commands them to the robot
-          this.setModuleStates(speeds),
-      true, //mirror path bool
-      this // requirements
+      (ChassisSpeeds speeds) -> 
+          this.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation2d())),
+      true,
+      this 
     );
     return choreoSwerveCommand;
   }
