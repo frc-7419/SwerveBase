@@ -160,26 +160,26 @@ public class DriveBaseSubsystem extends SubsystemBase {
     setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
-  /**
-   * @param path
-   * @return
-   */
-  public Command followTrajectory(String path){
-    //kmoney says to remember to exclude the .traj file extension in the path
-    ChoreoTrajectory traj = Choreo.getTrajectory(path);
-    Command choreoSwerveCommand = Choreo.choreoSwerveCommand(
-      traj, 
-      this::getPose, 
-      new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
-      new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
-      new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
-      (ChassisSpeeds speeds) -> 
-          this.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation2d())),
-      true,
-      this 
-    );
-    return choreoSwerveCommand;
-  }
+  // /**
+  //  * @param path
+  //  * @return
+  //  */
+  // public Command followTrajectory(String path){
+  //   //kmoney says to remember to exclude the .traj file extension in the path
+  //   ChoreoTrajectory traj = Choreo.getTrajectory(path);
+  //   Command choreoSwerveCommand = Choreo.choreoSwerveCommand(
+  //     traj, 
+  //     this::getPose, 
+  //     new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
+  //     new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
+  //     new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
+  //     (ChassisSpeeds speeds) -> 
+  //         this.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation2d())),
+  //     true,
+  //     this 
+  //   );
+  //   return choreoSwerveCommand;
+  // }
 
   @Override
   public void periodic() {
