@@ -78,4 +78,12 @@ public final class Constants {
       this.location = location;
     } 
   }
+
+  public static class PathPlannerConstants{
+
+    public static final double kPYController = 1.0;
+    public static final double kPThetaController = 1.0;
+    public static final double kPXController = 1.0;
+
+  }
 }
