@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,15 +18,20 @@ import frc.robot.subsystems.drive.DriveBaseSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AdvancedCurveAuton extends SequentialCommandGroup {
   /** Creates a new AdvancedCurveAuton. */
-  public AdvancedCurveAuton(DriveBaseSubsystem driveBaseSubsystem) {
+  public AdvancedCurveAuton(DriveBaseSubsystem driveBaseSubsystem, ChoreoTrajectory choreoTrajectory) {
     addRequirements(driveBaseSubsystem);
+    PIDController xPIDController = new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0);
+    PIDController yPIDController = new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0);
+    PIDController thetaPIDController = new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0);
+    thetaPIDController.enableContinuousInput(-Math.PI, Math.PI);
+      
     addCommands(
       Choreo.choreoSwerveCommand(
-      Choreo.getTrajectory("ZeroHomo"), 
+      choreoTrajectory, 
       driveBaseSubsystem::getPose, 
-      new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
-      new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
-      new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
+      xPIDController,
+      yPIDController,
+      thetaPIDController,
       (ChassisSpeeds speeds) -> 
           driveBaseSubsystem.setModuleStates(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, driveBaseSubsystem.getRotation2d())),
       true,

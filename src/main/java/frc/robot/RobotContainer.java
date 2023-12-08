@@ -69,7 +69,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-      return new AdvancedCurveAuton(driveBaseSubsystem);
+      return new AdvancedCurveAuton(driveBaseSubsystem, traj);
   }
   /**
    * Sets default commands to be used for teleop
