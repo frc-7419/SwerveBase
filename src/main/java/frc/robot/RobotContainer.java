@@ -3,7 +3,7 @@ package frc.robot;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 
-import lib.choreolib.TrajectoryManager;
+
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -41,6 +41,7 @@ public class RobotContainer {
     //Setting up Traj - needs to be here to prevent delay in auton
 
     traj = Choreo.getTrajectory("Parabola");
+
     m_field.getObject("traj").setPoses(
         traj.getInitialPose(), traj.getFinalPose()
     );
