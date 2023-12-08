@@ -10,11 +10,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.TestAuton;
+import frc.robot.commands.AdvancedCurveAuton;
 import frc.robot.commands.SwerveDriveFieldCentric;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
@@ -73,7 +71,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-      return new TestAuton(driveBaseSubsystem, traj);
+      return new AdvancedCurveAuton(driveBaseSubsystem, traj);
   }
   /**
    * Sets default commands to be used for teleop
