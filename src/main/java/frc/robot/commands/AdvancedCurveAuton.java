@@ -21,13 +21,13 @@ public class AdvancedCurveAuton extends SequentialCommandGroup {
     addRequirements(driveBaseSubsystem);
     addCommands(
       Choreo.choreoSwerveCommand(
-      Choreo.getTrajectory("BasicCurve"), 
+      Choreo.getTrajectory("ZeroHomo"), 
       driveBaseSubsystem::getPose, 
       new PIDController(Constants.PathPlannerConstants.kPXController, 0.0, 0.0),
       new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
       new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
       (ChassisSpeeds speeds) -> 
-          driveBaseSubsystem.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, driveBaseSubsystem.getRotation2d())),
+          driveBaseSubsystem.setModuleStates(speeds),
       true,
       driveBaseSubsystem 
     )

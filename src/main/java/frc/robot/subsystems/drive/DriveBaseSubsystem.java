@@ -184,6 +184,8 @@ public class DriveBaseSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Yaw", getYaw());
+    SmartDashboard.putNumber("PoseX", getPose().getX());
+    SmartDashboard.putNumber("PoseY", getPose().getY());
     frontLeftModule.outputDashboard();
     frontRightModule.outputDashboard();
     backLeftModule.outputDashboard();

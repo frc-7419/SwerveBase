@@ -81,9 +81,9 @@ public final class Constants {
 
   public static class PathPlannerConstants{
 
-    public static final double kPYController = 1.0;
-    public static final double kPThetaController = 1.0;
-    public static final double kPXController = 1.0;
+    public static final double kPYController = 0.05;
+    public static final double kPThetaController = 0.05;
+    public static final double kPXController = 0.05;
 
   }
 }
