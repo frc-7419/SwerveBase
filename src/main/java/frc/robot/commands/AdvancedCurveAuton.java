@@ -27,7 +27,7 @@ public class AdvancedCurveAuton extends SequentialCommandGroup {
       new PIDController(Constants.PathPlannerConstants.kPYController, 0.0, 0.0),
       new PIDController(Constants.PathPlannerConstants.kPThetaController, 0.0, 0.0),
       (ChassisSpeeds speeds) -> 
-          driveBaseSubsystem.setModuleStates(speeds),
+          driveBaseSubsystem.setModuleStates(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, driveBaseSubsystem.getRotation2d())),
       true,
       driveBaseSubsystem 
     )
