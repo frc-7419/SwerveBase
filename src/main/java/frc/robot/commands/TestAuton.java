@@ -9,6 +9,7 @@ import com.choreo.lib.ChoreoTrajectory;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
@@ -26,6 +27,7 @@ public class AdvancedCurveAuton extends SequentialCommandGroup {
     thetaPIDController.enableContinuousInput(-Math.PI, Math.PI);
       
     addCommands(
+      Commands.runOnce(() -> driveBaseSubsystem.resetOdometry(choreoTrajectory.getInitialPose())),
       Choreo.choreoSwerveCommand(
       choreoTrajectory, 
       driveBaseSubsystem::getPose, 
@@ -36,7 +38,8 @@ public class AdvancedCurveAuton extends SequentialCommandGroup {
           driveBaseSubsystem.setModuleStates(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, driveBaseSubsystem.getRotation2d())),
       true,
       driveBaseSubsystem 
-    )
+      ),
+      Commands.runOnce(() -> driveBaseSubsystem.setModuleStates(new ChassisSpeeds(0, 0, 0)))
     );
   }
 }

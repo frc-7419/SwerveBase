@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AdvancedCurveAuton;
+import frc.robot.commands.TestAuton;
 import frc.robot.commands.SwerveDriveFieldCentric;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
@@ -35,10 +35,12 @@ public class RobotContainer {
 
   private final ChoreoTrajectory traj;
   Field2d m_field = new Field2d();
+
   /**
    * Creates new RobotContainer and configures auton and buttons
    */
   public RobotContainer() {
+    //Setting up Traj - needs to be here to prevent delay in auton
     TrajectoryManager.getInstance().LoadTrajectories();
     traj = TrajectoryManager.getInstance().getTrajectory("BasicCurve");
 
@@ -71,7 +73,7 @@ public class RobotContainer {
    * @return Auton command
    */
   public Command getAutonomousCommand() {
-      return new AdvancedCurveAuton(driveBaseSubsystem, traj);
+      return new TestAuton(driveBaseSubsystem, traj);
   }
   /**
    * Sets default commands to be used for teleop
