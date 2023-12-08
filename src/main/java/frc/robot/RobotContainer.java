@@ -32,13 +32,14 @@ public class RobotContainer {
   //Commands
   private final SwerveDriveFieldCentric swerveDriveFieldCentric = new SwerveDriveFieldCentric(driver, driveBaseSubsystem);
   private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+
   private final ChoreoTrajectory traj;
+  Field2d m_field = new Field2d();
   /**
    * Creates new RobotContainer and configures auton and buttons
    */
   public RobotContainer() {
     TrajectoryManager.getInstance().LoadTrajectories();
-    Field2d m_field = new Field2d();
     traj = TrajectoryManager.getInstance().getTrajectory("BasicCurve");
 
     m_field.getObject("traj").setPoses(
@@ -48,6 +49,7 @@ public class RobotContainer {
         traj.getPoses()
     );
 
+    driveBaseSubsystem.resetOdometry(traj.getInitialPose());
 
     configureButtonBindings();
     configureAutoSelector();
