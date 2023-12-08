@@ -12,6 +12,8 @@ import frc.robot.commands.AdvancedCurveAuton;
 import frc.robot.commands.SwerveDriveFieldCentric;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
+//import lib.choreolib.TrajectoryManager;
+
 public class RobotContainer {
   
   // Joysticks, subsystems, and commands must all be private and final
@@ -29,6 +31,9 @@ public class RobotContainer {
    * Creates new RobotContainer and configures auton and buttons
    */
   public RobotContainer() {
+    //TrajectoryManager.getInstance().LoadTrajectories();
+    //traj = TrajectoryManager.getInstance().getTrajectory("New Path.json");
+
     configureButtonBindings();
     configureAutoSelector();
   }
