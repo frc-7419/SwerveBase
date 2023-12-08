@@ -145,7 +145,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
    * Sets the individual swerve module states
    * @param moduleStates
    */
-  public void setModuleStates(SwerveModuleState[] moduleStates) {
+  private void setModuleStates(SwerveModuleState[] moduleStates) {
     frontLeftModule.setSwerveModuleState(moduleStates[0]);
     frontRightModule.setSwerveModuleState(moduleStates[1]);
     backLeftModule.setSwerveModuleState(moduleStates[2]);
@@ -157,7 +157,7 @@ public class DriveBaseSubsystem extends SubsystemBase {
    * @param moduleStates
    */
   public void setModuleStates(ChassisSpeeds chassisSpeeds) {
-    setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(chassisSpeeds));
+    setModuleStates(Constants.SwerveConstants.m_SwerveDriveKinematics.toSwerveModuleStates(ChassisSpeeds.discretize(chassisSpeeds, 1)));
   }
 
   // /**
