@@ -1,9 +1,15 @@
 package frc.robot;
 
 import com.choreo.lib.Choreo;
+import com.choreo.lib.ChoreoTrajectory;
+
+import lib.choreolib.TrajectoryManager;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -12,7 +18,6 @@ import frc.robot.commands.AdvancedCurveAuton;
 import frc.robot.commands.SwerveDriveFieldCentric;
 import frc.robot.subsystems.drive.DriveBaseSubsystem;
 
-//import lib.choreolib.TrajectoryManager;
 
 public class RobotContainer {
   
@@ -27,12 +32,22 @@ public class RobotContainer {
   //Commands
   private final SwerveDriveFieldCentric swerveDriveFieldCentric = new SwerveDriveFieldCentric(driver, driveBaseSubsystem);
   private final SendableChooser<Command> autonomousChooser = new SendableChooser<>();
+  private final ChoreoTrajectory traj;
   /**
    * Creates new RobotContainer and configures auton and buttons
    */
   public RobotContainer() {
-    //TrajectoryManager.getInstance().LoadTrajectories();
-    //traj = TrajectoryManager.getInstance().getTrajectory("New Path.json");
+    TrajectoryManager.getInstance().LoadTrajectories();
+    Field2d m_field = new Field2d();
+    traj = TrajectoryManager.getInstance().getTrajectory("BasicCurve");
+
+    m_field.getObject("traj").setPoses(
+        traj.getInitialPose(), traj.getFinalPose()
+    );
+    m_field.getObject("trajPoses").setPoses(
+        traj.getPoses()
+    );
+
 
     configureButtonBindings();
     configureAutoSelector();
