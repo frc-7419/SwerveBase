@@ -13,6 +13,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,12 +32,14 @@ public class DriveBaseSubsystem extends SubsystemBase {
   private final SwerveModule backRightModule;
   private final AHRS ahrs;
 
+
   public DriveBaseSubsystem() {
     frontLeftModule = new SwerveModule(SwerveConstants.frontLeft.turnMotorID, SwerveConstants.frontLeft.driveMotorID, SwerveConstants.frontLeft.turnEncoderID, SwerveConstants.frontLeft.offset, "FrontLeftModule");
     frontRightModule = new SwerveModule(SwerveConstants.frontRight.turnMotorID, SwerveConstants.frontRight.driveMotorID, SwerveConstants.frontRight.turnEncoderID, SwerveConstants.frontRight.offset, "FrontRightModule");
     backLeftModule = new SwerveModule(SwerveConstants.backLeft.turnMotorID, SwerveConstants.backLeft.driveMotorID, SwerveConstants.backLeft.turnEncoderID, SwerveConstants.backLeft.offset, "BackLeftModule");
     backRightModule = new SwerveModule(SwerveConstants.backRight.turnMotorID, SwerveConstants.backRight.driveMotorID, SwerveConstants.backRight.turnEncoderID, SwerveConstants.backRight.offset, "BackRightModule");
     ahrs = new AHRS(SerialPort.Port.kMXP);
+
     ahrs.zeroYaw(); // field centric, we need yaw to be zero
     m_odometry = new SwerveDriveOdometry(Constants.SwerveConstants.m_SwerveDriveKinematics, ahrs.getRotation2d(), getPositions());
     coast();
@@ -186,10 +191,16 @@ public class DriveBaseSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Yaw", getYaw());
     SmartDashboard.putNumber("PoseX", getPose().getX());
     SmartDashboard.putNumber("PoseY", getPose().getY());
+
+
     frontLeftModule.outputDashboard();
     frontRightModule.outputDashboard();
     backLeftModule.outputDashboard();
     backRightModule.outputDashboard();
     m_odometry.update(getRotation2d(), getPositions());
+
+    SmartDashboard.putNumberArray("Current Pose", new double[]{getPose().getX(), getPose().getY(), getRotation2d().getDegrees()});
+
   }
+
 }

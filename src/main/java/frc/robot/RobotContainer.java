@@ -40,7 +40,7 @@ public class RobotContainer {
   public RobotContainer() {
     //Setting up Traj - needs to be here to prevent delay in auton
 
-    traj = Choreo.getTrajectory("Parabola");
+    traj = Choreo.getTrajectory("FullHomo");
 
     m_field.getObject("traj").setPoses(
         traj.getInitialPose(), traj.getFinalPose()
